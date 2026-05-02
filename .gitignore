@@ -20,6 +20,12 @@
 /[Uu]ser[Ss]ettings/
 *.log
 
+
+# Imported assets for development, can be re-imported from source files if needed
+.erp
+ERP/
+Gridbox Prototype Materials/
+
 # By default unity supports Blender asset imports, *.blend1 blender files do not need to be committed to version control.
 *.blend1
 *.blend1.meta
