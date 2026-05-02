@@ -13,7 +13,7 @@ namespace Speed.Core
             if (!showDebug || player == null) return;
 
             int width = 300;
-            int height = 200;
+            int height = 280;
             Rect rect = new Rect(10, 10, width, height);
 
             GUI.color = Color.white;
@@ -26,18 +26,29 @@ namespace Speed.Core
             GUILayout.Space(20);
 
             // State
-            string stateName = player.StateMachine.CurrentState != null 
-                ? player.StateMachine.CurrentState.GetType().Name 
+            string stateName = player.StateMachine.CurrentState != null
+                ? player.StateMachine.CurrentState.GetType().Name
                 : "None";
             GUILayout.Label($"State: {stateName}");
 
             // Velocity
             Vector3 vel = player.rb != null ? player.rb.linearVelocity : Vector3.zero;
-            GUILayout.Label($"Velocity: {vel.x:F1}, {vel.y:F1}, {vel.z:F1}");
+            Transform reference = player.visuals != null ? player.visuals : player.transform;
+            Vector3 localVel = reference != null ? reference.InverseTransformDirection(vel) : vel;
+            float horizontalAngle = Mathf.Atan2(localVel.x, localVel.z) * Mathf.Rad2Deg;
+
+            GUILayout.Label($"Local Vel: Fwd {localVel.z:F1} | Right {localVel.x:F1} | Up {localVel.y:F1}");
+            GUILayout.Label($"Horiz Angle: {horizontalAngle:F1}°");
 
             // Sensors
             bool grounded = player.sensors != null && player.sensors.IsGrounded;
             GUILayout.Label($"Grounded: {grounded}");
+
+            if (player.sensors != null)
+            {
+                GUILayout.Label($"Slope Angle: {player.sensors.CurrentSlopeAngle:F1}°");
+                GUILayout.Label($"Slide Start Angle: {player.slideStartSlopeAngle:F1}°");
+            }
 
             // Input Buffer
             GUILayout.Label("--- Input Buffer ---");

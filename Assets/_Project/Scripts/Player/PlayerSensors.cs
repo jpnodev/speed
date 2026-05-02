@@ -3,11 +3,12 @@ using Speed.Core;
 
 namespace Speed.Player
 {
+    [RequireComponent(typeof(PlayerController))]
     public class PlayerSensors : MonoBehaviour
     {
         [Header("Settings")]
         public LayerMask groundLayer;
-        public float groundCheckDistance = 1.1f;
+        public float groundCheckDistance = 1.5f; // Increased to 1.5 to reach steep slopes!
         public float groundCheckSphereRadius = 0.4f; // Radius of the sphere cast
 
         [Header("Status (Read Only)")]
@@ -27,15 +28,14 @@ namespace Speed.Player
         {
             _wasGroundedLastFrame = IsGrounded;
 
-            // SphereCast instead of Raycast to cover a wider area under the player.
-            // Using transform.position as origin (assuming center of player is at y=0 relative to the capsule).
-            // The capsule bottom is at -1.0. We want to check slightly past that (groundCheckDistance = 1.1).
-            Vector3 origin = transform.position;
-            // The distance the sphere needs to travel so its bottom reaches groundCheckDistance.
-            float castDistance = groundCheckDistance - groundCheckSphereRadius;
+            // Simplified, highly reliable SphereCast.
+            // Capsule radius is 0.5. We use 0.45 to prevent getting caught on side-walls.
+            float radius = 0.45f;
+            // The capsule's center is 0. Bottom is -1.0.
+            // A sphere of 0.45 needs to travel 0.55 down to hit exactly -1.0. We add 0.1 buffer to check floor.
+            float castDistance = 0.65f;
 
-            RaycastHit hit;
-            IsGrounded = Physics.SphereCast(origin, groundCheckSphereRadius, Vector3.down, out hit, castDistance, groundLayer);
+            IsGrounded = Physics.SphereCast(transform.position, radius, Vector3.down, out RaycastHit hit, castDistance, groundLayer);
 
             if (IsGrounded)
             {
@@ -58,11 +58,7 @@ namespace Speed.Player
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = IsGrounded ? Color.green : Color.red;
-
-            Vector3 origin = transform.position + Vector3.up * groundCheckSphereRadius;
-            float castDistance = groundCheckDistance - groundCheckSphereRadius + 0.1f;
-
-            Gizmos.DrawWireSphere(origin + Vector3.down * castDistance, groundCheckSphereRadius);
+            Gizmos.DrawWireSphere(transform.position + Vector3.down * 0.65f, 0.45f);
         }
     }
 }

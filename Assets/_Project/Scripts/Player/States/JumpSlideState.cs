@@ -1,12 +1,14 @@
 using UnityEngine;
-using Speed.Core;
-using Speed.Inputs;
 
 namespace Speed.Player
 {
-    public class FallState : PlayerState
+    public class JumpSlideState : PlayerState
     {
-        public FallState(PlayerController player) : base(player) { }
+        public JumpSlideState(PlayerController player) : base(player) { }
+
+        public override void Enter()
+        {
+        }
 
         public override void Tick()
         {

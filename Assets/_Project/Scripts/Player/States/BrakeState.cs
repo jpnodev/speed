@@ -1,12 +1,11 @@
 using UnityEngine;
-using Speed.Core;
 using Speed.Inputs;
 
 namespace Speed.Player
 {
-    public class FallState : PlayerState
+    public class BrakeState : PlayerState
     {
-        public FallState(PlayerController player) : base(player) { }
+        public BrakeState(PlayerController player) : base(player) { }
 
         public override void Tick()
         {
